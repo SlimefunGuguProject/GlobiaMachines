@@ -1,18 +1,18 @@
 package me.fhoz.globiamachines.machines;
 
+import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.attributes.RecipeDisplayItem;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.implementation.items.electric.machines.ElectricDustWasher;
 import io.github.thebusybiscuit.slimefun4.implementation.items.multiblocks.OreWasher;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
-import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
-import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import me.fhoz.globiamachines.utils.Constants;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -32,11 +32,11 @@ public class BudgetDustFabricator extends AContainer implements RecipeDisplayIte
 
     public static final int ENERGY_CONSUMPTION = 26;
     public static final int CAPACITY = ENERGY_CONSUMPTION * 3;
-    private OreWasher oreWasher;
     private final List<ItemStack> acceptableInputs = new ArrayList<>(Arrays.asList(
-        new ItemStack(Material.COBBLESTONE), new ItemStack(Material.ANDESITE),
-        new ItemStack(Material.DIORITE), new ItemStack(Material.GRANITE)
+            new ItemStack(Material.COBBLESTONE), new ItemStack(Material.ANDESITE),
+            new ItemStack(Material.DIORITE), new ItemStack(Material.GRANITE)
     ));
+    private OreWasher oreWasher;
 
     public BudgetDustFabricator(ItemGroup category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
@@ -56,7 +56,7 @@ public class BudgetDustFabricator extends AContainer implements RecipeDisplayIte
 
         for (SlimefunItemStack dust : Constants.dusts) {
             displayRecipes.add(new CustomItemStack(Material.COBBLESTONE,
-                "&f任意圆石变种", "&7圆石", "&7安山岩", "&7闪长岩", "&7花岗岩"
+                    "&f任意圆石变种", "&7圆石", "&7安山岩", "&7闪长岩", "&7花岗岩"
             ));
             displayRecipes.add(dust);
         }
@@ -74,8 +74,8 @@ public class BudgetDustFabricator extends AContainer implements RecipeDisplayIte
                     }
 
                     ItemStack dust = oreWasher.getRandomDust();
-                    MachineRecipe recipe = new MachineRecipe(4 / getSpeed(), new ItemStack[] {acceptableInput},
-                            new ItemStack[] {dust});
+                    MachineRecipe recipe = new MachineRecipe(4 / getSpeed(), new ItemStack[]{acceptableInput},
+                            new ItemStack[]{dust});
 
                     if (menu.fits(recipe.getOutput()[0], getOutputSlots())) {
                         menu.consumeItem(slot);

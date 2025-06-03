@@ -4,8 +4,9 @@ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
 import me.fhoz.globiamachines.GlobiaMachines;
-
-import java.util.Map;
+import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
+import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
+import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -15,7 +16,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
@@ -32,10 +33,14 @@ import java.util.TreeMap;
 
 public final class Utils {
 
+    private static final DecimalFormat powerFormat;
     private static final NamespacedKey globiakey = new NamespacedKey(GlobiaMachines.getInstance(), "globiakey");
     private static final NamespacedKey nonClickable = new NamespacedKey(GlobiaMachines.getInstance(), "nonclickable");
-
     private final static TreeMap<Integer, String> map = new TreeMap<>();
+
+    static {
+        powerFormat = new DecimalFormat("###,###.##", DecimalFormatSymbols.getInstance(Locale.ROOT));
+    }
 
     static {
 
@@ -55,7 +60,33 @@ public final class Utils {
 
     }
 
-    private Utils() {}
+    private Utils() {
+    }
+
+    public static String powerFormatAndFadeDecimals(double power) {
+        String formattedString = powerFormat.format(power);
+        return formattedString.indexOf(46) != -1 ? formattedString.substring(0, formattedString.indexOf(46)) + ChatColor.DARK_GRAY + formattedString.substring(formattedString.indexOf(46)) + ChatColor.GRAY : formattedString;
+    }
+
+    public static void putOutputSlot(BlockMenuPreset preset, int slot) {
+        preset.addItem(slot, (ItemStack) null, new ChestMenu.AdvancedMenuClickHandler() {
+            public boolean onClick(Player p, int slot, ItemStack cursor, ClickAction action) {
+                return false;
+            }
+
+            public boolean onClick(InventoryClickEvent e, Player p, int slot, ItemStack cursor, ClickAction action) {
+                return cursor == null || cursor.getType() == Material.AIR;
+            }
+        });
+    }
+
+    public static double ticksToSeconds(double ticks) {
+        return Constants.CUSTOM_TICKER_DELAY <= 0 ? (double) 20.0F * ticks : (double) Constants.CUSTOM_TICKER_DELAY / (double) 20.0F * ticks;
+    }
+
+    public static double perTickToPerSecond(double power) {
+        return Constants.CUSTOM_TICKER_DELAY <= 0 ? (double) 20.0F * power : (double) 1.0F / ((double) Constants.CUSTOM_TICKER_DELAY / (double) 20.0F) * power;
+    }
 
     public static String color(String str) {
         if (str == null) {
@@ -104,9 +135,9 @@ public final class Utils {
 
     public static boolean checkAdjacent(Block b, Material material) {
         return b.getRelative(BlockFace.NORTH).getType() == material
-            || b.getRelative(BlockFace.EAST).getType() == material
-            || b.getRelative(BlockFace.SOUTH).getType() == material
-            || b.getRelative(BlockFace.WEST).getType() == material;
+                || b.getRelative(BlockFace.EAST).getType() == material
+                || b.getRelative(BlockFace.SOUTH).getType() == material
+                || b.getRelative(BlockFace.WEST).getType() == material;
     }
 
     public static void giveOrDropItem(Player p, ItemStack toGive) {
@@ -149,19 +180,19 @@ public final class Utils {
 
     public static boolean canOpen(@Nonnull Block b, @Nonnull Player p) {
         return (p.hasPermission("slimefun.inventory.bypass")
-            || Slimefun.getProtectionManager().hasPermission(
-            p, b.getLocation(), Interaction.INTERACT_BLOCK));
+                || Slimefun.getProtectionManager().hasPermission(
+                p, b.getLocation(), Interaction.INTERACT_BLOCK));
     }
 
     // Don't use Slimefun's runsync
     public static BukkitTask runSync(Runnable r) {
         return GlobiaMachines.getInstance() != null && GlobiaMachines.getInstance().isEnabled() ?
-            Bukkit.getScheduler().runTask(GlobiaMachines.getInstance(), r) : null;
+                Bukkit.getScheduler().runTask(GlobiaMachines.getInstance(), r) : null;
     }
 
     public static BukkitTask runSync(Runnable r, long delay) {
         return GlobiaMachines.getInstance() != null && GlobiaMachines.getInstance().isEnabled() ?
-            Bukkit.getScheduler().runTaskLater(GlobiaMachines.getInstance(), r, delay) : null;
+                Bukkit.getScheduler().runTaskLater(GlobiaMachines.getInstance(), r, delay) : null;
     }
 }
 
